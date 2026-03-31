@@ -1,4 +1,4 @@
-# [Foundation Models for Chernekov Detectors at GlueX](https://iopscience.iop.org/article/10.1088/2632-2153/ae3d81)
+# [Foundation Models for Cherenkov Detectors at GlueX](https://iopscience.iop.org/article/10.1088/2632-2153/ae3d81)
 
 ## Abstract
 
