@@ -66,7 +66,7 @@ class FF(nn.Module):
         return self.nn(x)
 
 class CrossAttention(nn.Module):
-    def __init__(self, embed_dim, num_heads, seq_len=150, dropout=0.2,device='cuda',qk_norm=True):
+    def __init__(self, embed_dim, num_heads, seq_len=180, dropout=0.2,device='cuda',qk_norm=True):
         super().__init__()
 
         assert embed_dim % num_heads == 0, "embed_dim is indivisible by num_heads"
@@ -179,7 +179,7 @@ class CATransformerBlock(nn.Module):
 
 
 class MHSA(nn.Module):
-    def __init__(self, embed_dim, num_heads, seq_len=150, dropout=0.2,device='cuda',qk_norm=True):
+    def __init__(self, embed_dim, num_heads, seq_len=180, dropout=0.2,device='cuda',qk_norm=True):
         super().__init__()
 
         assert embed_dim % num_heads == 0, "embed_dim is indivisible by num_heads"
@@ -539,9 +539,9 @@ class Cherenkov_GPT(nn.Module):
         if add_dark_noise:
             x,y,t,pmtID,pixelID,channel,dn_hits = self.__add_dark_noise(np.concatenate([np.c_[x],np.c_[y],np.c_[t],np.c_[pmtID],np.c_[pixelID],np.c_[channel]],axis=1))
             num_samples += dn_hits
-            return {"NHits":num_samples,"P":k[0],"Theta":k[1],"Phi":Phi,"x":x,"y":y,"leadTime":t,"pmtID":pmtID,"pixelID":pixelID,"channel":channel,"PID":PID}
+            return {"NHits":num_samples,"P":k[0],"Theta":k[1],"Phi":Phi,"x":x,"y":y,"leadTime":t,"pmtID":pmtID,"pixelID":pixelID,"channel":channel,"PDG":PID}
         else:
-            return {"NHits":num_samples,"P":k[0],"Theta":k[1],"Phi":Phi,"x":x,"y":y,"leadTime":t,"pmtID":pmtID,"pixelID":pixelID,"channel":p,"PID":PID}
+            return {"NHits":num_samples,"P":k[0],"Theta":k[1],"Phi":Phi,"x":x,"y":y,"leadTime":t,"pmtID":pmtID,"pixelID":pixelID,"channel":p,"PDG":PID}
 
 
     def post_process(self, pixels, times,k,add_dark_noise=False,PID=None):
@@ -574,7 +574,7 @@ class Cherenkov_GPT(nn.Module):
 
 
     @torch.no_grad()
-    def generate(self, k, unscaled_k,class_label=None, max_seq_len: int = 150, context_len = None,
+    def generate(self, k, unscaled_k,class_label=None, max_seq_len: int = 180, context_len = None,
                  temperature: float = 1.0, method="Default", topK=100, nucleus_p=0.98,
                  dynamic_temp=False,add_dark_noise=False,PID=None):
 
@@ -654,7 +654,7 @@ class Cherenkov_GPT(nn.Module):
 
 
     @torch.no_grad()
-    def generate_PDF(self,kinematics,unscaled_k,PID=None, numPhotons=2e5,max_seq_len: int = 150,
+    def generate_PDF(self,kinematics,unscaled_k,PID=None, numPhotons=2e5,max_seq_len: int = 180,
                  context_len = None, temperature: float = 1.05, method="Nucleus", topK=100,
                  nucleus_p=0.995, dynamic_temp=False,add_dark_noise=False):
 

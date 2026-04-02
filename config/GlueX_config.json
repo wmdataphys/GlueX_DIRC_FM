@@ -1,5 +1,5 @@
 {
-    "name": "GlueX_350nsMaxTime",
+    "name": "GlueX",
     "seed": 752022,
     "run_val": 1,
     "sim_type": "pgun",  
@@ -20,25 +20,6 @@
         "phi_max": 175.5,
         "phi_min": -176.0,
         "time_res": 0.06
-    },
-    "stats_NF": {
-        "x_max": 350.0,
-        "x_min": 2.0,
-        "y_max": 230.1,
-        "y_min": 2.0,
-        "time_max": 157.0,
-        "time_min": 0.0,
-        "P_max": 10.0,
-        "P_min": 0.5,
-        "theta_max": 160.0,
-        "theta_min": 25.0
-    },
-    "model_NF": {
-        "num_layers": 20,
-        "input_shape": 3,
-        "cond_shape": 2,
-        "num_blocks": 2,
-        "hidden_nodes": 128
     },
     "model": {
         "vocab_size": 5763,
@@ -64,29 +45,6 @@
         "time_pad_token": 5496
     },
     "dataset": {
-        "fixed_point_fs": {
-            "data_path_3GeV": "../Cherenkov_FastSim/Generations/NF_New_Prior_3GeV",
-            "data_path_6GeV": "Generations/QKNorm_EpochFinal_PrependKinematics_TimeeStop_DynamicExpMin95",
-            "data_path_9GeV": "../Cherenkov_FastSim/Generations/NF_New_Prior_9GeV",
-            "data_path_full": "../Cherenkov_FastSim/Generations/NF_FullPhaseSpace_NOPhotonSampling"
-        },
-        "time_imaging": {
-            "data_path_9GeV": "../Cherenkov_FastSim/data/TimeImaging_9GeV/Combined_pik_9GeV_TimeImaging_PiK.pkl",
-            "data_path_6GeV": "../Cherenkov_FastSim/data/TimeImaging_6GeV/Combined_pik_6GeV_TimeImaging_PiK.pkl",
-            "data_path_3GeV": "../Cherenkov_FastSim/data/TimeImaging_3GeV/Combined_pik_3GeV_TimeImaging_PiK.pkl"
-        },
-        "fixed_point": {
-            "pion_data_path_6GeV": "data/6GeV_setP_Jan27/merged_pik_6GeV_Pions.pkl",
-            "kaon_data_path_6GeV": "data/6GeV_setP_Jan27/merged_pik_6GeV_Kaons.pkl",
-            "pion_data_path_9GeV": "../Cherenkov_FastSim/data/9GeV_setP_Jan27/merged_pik_9GeV_Pions.pkl",
-            "kaon_data_path_9GeV": "../Cherenkov_FastSim/data/9GeV_setP_Jan27/merged_pik_9GeV_Kaons.pkl",
-            "pion_data_path_3GeV": "../Cherenkov_FastSim/data/3GeV_setP_Jan27/merged_pik_3GeV_Pions.pkl",
-            "kaon_data_path_3GeV": "../Cherenkov_FastSim/data/3GeV_setP_Jan27/merged_pik_3GeV_Kaons.pkl"
-        },
-        "full_phase_space": {
-            "pion_data_path": "data/Testing_Pions_Particle_Gun.pkl",
-            "kaon_data_path": "data/Testing_Kaons_Particle_Gun.pkl"
-        },
         "training": {
             "pion_data_path": "data/Training_Pions_Particle_Gun.pkl",
             "kaon_data_path": "data/Training_Kaons_Particle_Gun.pkl"
@@ -142,34 +100,16 @@
         }
     },
     "output": {
-        "dir": "/sciclone/scr10/jgiroux/GlueX_Models"
+        "dir": "Trained_Models"
     },
     "Inference": {
         "batch_size": 50,
-        "classifier_path": "Trained_Models/GlueX_350nsMaxTime_OffsetVocab_CLSTune___Mar-31-2026/Epoch29_loss_0.281881.pth",
-        "classifier_path_": "Trained_Models/GlueX_350nsMaxTime_4Experts_CLSTune_512Batch_CLSDrop_Perturbations_1ns_1Pixel___Mar-29-2026/Epoch49_loss_0.277513.pth",
-        "classifier_path_": "Trained_Models/GlueX_350nsMaxTime_4Experts_CLSTune_512Batch_CLSDrop___Mar-28-2026/Epoch05_loss_0.386934.pth",
-        "classifier_path_": "Trained_Models/GlueX_350nsMaxTime_4Experts_CLSTune_512Batch_NonLinearMLP___Mar-28-2026/Epoch05_loss_0.379410.pth",
-        "classifier_path_": "Trained_Models/GlueX_350nsMaxTime_4Experts_CLSTune___Mar-27-2026/Epoch05_loss_0.397099.pth",
-        "classifier_path_": "Trained_Models/GlueX_350nsMaxTime_4Experts_CLSTune_4096Batch___Mar-27-2026/Epoch05_loss_0.381528.pth",
-        "classifier_path_": "Trained_Models/GlueX_350nsMaxTime_4Experts_CLSTune_512Batch___Mar-27-2026/Epoch05_loss_0.382715.pth",
-        "classifier_path_old": "/sciclone/scr10/jgiroux/GlueX_Models/GlueX_Classification_FineTuneFrom4Experts___Jul-05-2025/GlueX_Classification_FineTuneFrom4Experts_epoch99_val_loss_0.214148.pth",
-        "classifier_path_old": "/sciclone/scr10/jgiroux/GlueX_Models/GlueX_Classification_FineTuneFrom4Experts___Jul-05-2025/GlueX_Classification_FineTuneFrom4Experts_epoch16_val_loss_0.178786.pth",
-        "out_dir_cls": "Inference/CLS_OffsetVocab_Epoch29",
-        "filter_path": "Trained_Models/GlueX_350nsMaxTime_OffsetVocab_Filtering___Mar-31-2026/Epoch19_loss_0.016550.pth",
-        "out_dir_filtering": "Inference/Filtering_Results_OffsetVocab_Epoch19",
-        "pion_model_path": "Trained_Models/GlueX_350nsMaxTime_OffsetVocab___Mar-30-2026/Epoch49_loss_11.161301.pth",
-        "kaon_model_path": "Trained_Models/GlueX_350nsMaxTime_OffsetVocab___Mar-30-2026/Epoch49_loss_11.161301.pth",
-        "pion_model_path_": "Trained_Models/GlueX_350nsMaxTime_4Experts___Mar-27-2026/Epoch49_loss_11.330617.pth",
-        "kaon_model_path_": "Trained_Models/GlueX_350nsMaxTime_4Experts___Mar-27-2026/Epoch49_loss_11.330617.pth",
-        "pion_model_path_2Experts": "Trained_Models/MoE_TwoExperts.pth",
-        "kaon_model_path_2Experts": "Trained_Models/MoE_TwoExperts.pth",
-        "pion_model_path_indep": "Trained_Models/Pion_model.pth",
-        "kaon_model_path_indep": "Trained_Models/Kaon_model.pth",
-        "generation_dir_": "GlueX_4Experts_Default_Temp1.0_Epoch49",
-        "generation_dir": "Test_VocabCompress_Epoch49",
-        "KDE_dir": "KDE_Fits/6.0/KDE_Results",
-        "simulation_dir": "Test_UpdatedBins",
-        "pdf_dir": "Test"
+        "classifier_path": "Trained_Models/classifier.pth",
+        "out_dir_cls": "Inference/CLS_Results",
+        "filter_path": "Trained_Models/filtering.pth",
+        "out_dir_filtering": "Inference/Filtering_Results",
+        "pion_model_path": "Trained_Models/generative_model.pth",
+        "kaon_model_path": "Trained_Models/generative_model.pth",
+        "generation_dir": "My_Generations"
     }
 }

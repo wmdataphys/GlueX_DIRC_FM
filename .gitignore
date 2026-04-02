@@ -12,3 +12,6 @@ data
 config/CA_config.json
 config/GlueX_config_original.json
 config/GlueX_config_real.json
+config/GlueX_config_copy.json
+simulate_GlueX.py
+Simulation

@@ -226,9 +226,18 @@ def make_plots_fastsim(file_path,label,barID,x_low,x_high,outpath,filename,log_n
     text_y = legend_bbox_data.y0 - 0.005 # Place text slightly below legend
     x_lim = ax3.get_xlim()
     text_x = x_lim[1] * 0.7
-    if x_low == 0.0:
+    if x_low == 0.0 or x_high == 0.0:
         print("X low is 0.0, adjusting text position.")
         text_x = x_lim[1] * 0.7395
+        if x_low == -10.0:
+            print("X high is 0.0, adjusting text position.")
+            text_x = x_lim[1] * 0.73
+
+    if (x_low == 10.0 and x_high == 20.0) or (x_low == 20.0 and x_high == 30.0):
+        print("Adjusting text position for x_low = 10.0 and x_high = 20.0 or x_low = 20.0 and x_high = 30.0")
+        text_x = x_lim[1] * 0.7225
+        
+
     ax3.text(text_x, text_y, r"$X \in $" + f" = ({x_low},{x_high}) cm" "\n" f"BarID: {barID}" , fontsize=24,
     verticalalignment='top',  # Align text at the top
     bbox=dict(facecolor='white', edgecolor='grey', boxstyle='round,pad=0.3'))

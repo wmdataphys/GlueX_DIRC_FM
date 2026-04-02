@@ -330,6 +330,11 @@ def run_plotting_GlueX(out_folder,skewnorm=False):
     swin_results = np.load("other_results/swin_results.pkl",allow_pickle=True)
     geom_results = np.load("other_results/geom_results.pkl",allow_pickle=True)
     nf_results = np.load("other_results/NF_results.pkl",allow_pickle=True)
+    fm_results = np.load("other_results/FM_results.pkl",allow_pickle=True)
+
+    fm_rejections = fm_results['rejections']
+    fm_efficiencies = fm_results['efficiencies']  
+    fm_auc = fm_results['auc']
 
     rj_swin = swin_results['rejections']
     eff_swin = swin_results['efficiencies']
@@ -344,11 +349,11 @@ def run_plotting_GlueX(out_folder,skewnorm=False):
     nf_auc = nf_results['auc']
 
     fig = plt.figure()
-    #plt.plot(rejections_geom,efficiencies_geom, color='blue', lw=2, label=r'Geometric Method. AUC = {0:.3f}'.format(auc_geom))
-    plt.plot(rejections,efficiencies,color='red', lw=2, label=r'FM. AUC = {0:.3f}'.format(auc))
-    plt.plot(rj_swin,eff_swin,color='magenta',lw=2,label=r'Swin. AUC = {0:.3f}'.format(swin_auc))
-    plt.plot(rj_fn,eff_fn,color='blue',lw=2,label=r'NF-DLL. AUC = {0:.3f}'.format(nf_auc))
-    plt.plot(rj_geom,eff_geom,color='k',lw=2,label=r'Geometric. AUC = {0:.3f}'.format(geom_auc))
+    # plt.plot(fm_rejections,fm_efficiencies,color='blue', lw=2, label=r'$FM_{Scratch}$' + r' AUC = {0:.3f}'.format(fm_auc))
+    plt.plot(rejections,efficiencies,color='red', lw=2, label=r'$FM_{Fine \, tune}$' + r' AUC = {0:.3f}'.format(auc))
+    plt.plot(rj_swin,eff_swin,color='magenta',lw=2,label=r'$Swin$ AUC = {0:.3f}'.format(swin_auc))
+    plt.plot(rj_fn,eff_fn,color='blue',lw=2,label=r'$NF-DLL$ AUC = {0:.3f}'.format(nf_auc))
+    plt.plot(rj_geom,eff_geom,color='k',lw=2,label=r'$Geometric$ AUC = {0:.3f}'.format(geom_auc))
     plt.plot([0, 1], [1, 0], color='grey', lw=2, linestyle='--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
@@ -380,6 +385,11 @@ def run_plotting_GlueX(out_folder,skewnorm=False):
     swin_results = np.load("other_results/auc_func_p_swin.pkl",allow_pickle=True)
     geom_results = np.load("other_results/auc_func_p_geom.pkl",allow_pickle=True)
     nf_results = np.load("other_results/NF_auc_func_p.pkl",allow_pickle=True)
+    # fm_scratch_results = np.load("other_results/FM_auc_func_p.pkl",allow_pickle=True)
+
+    # fm_scratch_aucs = fm_scratch_results['aucs'][:len(centers)]
+    # fm_scratch_uppers = fm_scratch_results['uppers'][:len(centers)]
+    # fm_scratch_lowers = fm_scratch_results['lowers'][:len(centers)]
 
     swin_aucs = swin_results['aucs'][:len(centers)]
     swin_uppers = swin_results['uppers'][:len(centers)]
@@ -398,7 +408,6 @@ def run_plotting_GlueX(out_folder,skewnorm=False):
         mom_high = mom_ranges[i+1]
         idx = np.where((conditions[:,0] > mom_low) & (conditions[:,0] < mom_high))[0]
         p = predictions[idx]
-        #p_geom = dll_geom[idx]
         t = truth[idx]
         print("Momentum Range: ",mom_low,"-",mom_high)
         print("# Kaons: ",len(t[t==1]))
@@ -406,118 +415,69 @@ def run_plotting_GlueX(out_folder,skewnorm=False):
         n_pions.append(len(t[t==0]))
         print("# Pions: ",len(t[t==0]))
         lengths.append(len(p))
-        eff,rej,_ = compute_efficiency_rejection(p,t)#roc_curve(t,p)
-        #eff_geom,rej_geom,_= compute_efficiency_rejection_DLL(p_geom,t)#roc_curve(t_geom,p_geom)
+        eff,rej,_ = compute_efficiency_rejection(p,t)
         AUC = []
         AUC_geom = []
         sigma_eff = np.sqrt(eff * (1.0 - eff) / len(t[t == 1]))
         sigma_rej = np.sqrt(rej * (1.0 - rej) / len(t[t == 0]))
-        #sigma_eff_geom = np.sqrt(eff_geom * (1.0 - eff_geom) / len(t[t == 1]))
-        #sigma_rej_geom = np.sqrt(rej_geom * (1.0 - rej_geom) / len(t[t == 0]))
-        #print('FPR: ',fpr,'+-',sigma_fpr, " TPR: ",tpr,"+-",sigma_tpr)
+
         from scipy.integrate import trapezoid, simpson
         for _ in range(1000):
             eff_ = np.random.normal(eff,sigma_eff)
             rej_ = np.random.normal(rej,sigma_rej)
-            #eff_geom_ = np.random.normal(eff_geom,sigma_eff_geom)
-            #rej_geom_ = np.random.normal(rej_geom,sigma_rej_geom)
 
             AUC.append(trapezoid(y=np.flip(rej_),x=np.flip(eff_)))
-            #AUC_geom.append(trapezoid(y=np.flip(rej_geom_),x=np.flip(eff_geom_)))
-
 
         aucs.append(np.mean(AUC))
-        #aucs_geom.append(np.mean(AUC_geom))
-
         aucs_upper.append(np.percentile(AUC,97.5))
         aucs_lower.append(np.percentile(AUC,2.5))
 
-        #aucs_geom_upper.append(np.percentile(AUC_geom,97.5))
-        #aucs_geom_lower.append(np.percentile(AUC_geom,2.5))
+
         print("FM. -> Mean AUC: ",np.mean(AUC)," 95%",np.percentile(AUC,2.5),"-",np.percentile(AUC,97.5))
-        #print("Geom. -> Mean AUC: ",np.mean(AUC_geom)," 95%",np.percentile(AUC_geom,2.5),"-",np.percentile(AUC_geom,97.5))
-
-
-        # # Sigma separation
-        # p_idx = np.where(t == 0.0)[0]
-        # k_idx = np.where(t == 1.0)[0]
-        # if not skewnorm:
-        #     popt_k_NF,popt_p_NF,sep_NF,bin_centers_k_NF,bin_centers_p_NF,se,normalized = perform_fit(p[k_idx],p[p_idx],bins)
-        # else:
-        #     popt_k_NF,popt_p_NF,sep_NF,bin_centers_k_NF,bin_centers_p_NF,se,normalized = fit_skewnorm(p[k_idx],p[p_idx],bins)
-        # seps.append(abs(sep_NF))
-        # sep_err.append(se)
-
-        # print(f"Momentum Range: ({mom_low:.2f},{mom_high:.2f}) - Sigma: {sep_NF:.2f} +- {se:.2f}")
-
-        # if not skewnorm:
-        #     if normalized:
-        #         gaussian = gaussian_normalized
-        #     else:
-        #         gaussian = gaussian_unnormalized
-        #     plt.plot(bin_centers_k_NF, gaussian(bin_centers_k_NF, *popt_k_NF),color='blue', label=r"$\mathcal{K}$")
-        #     plt.plot(bin_centers_p_NF, gaussian(bin_centers_p_NF, *popt_p_NF),color='red', label=r"$\pi$")
-
-        # else:
-        #     x_pion,pdf_pion = plot_skewnorm(popt_p_NF, bin_centers_p_NF)
-        #     x_kaon,pdf_kaon = plot_skewnorm(popt_k_NF, bin_centers_k_NF)
-        #     plt.plot(x_kaon, pdf_kaon,color='blue', label=r"K")
-        #     plt.plot(x_pion, pdf_pion,color='red', label=r"$\pi$")
-
-        # plt.hist(p[p_idx],bins=bins,density=normalized,color='red',histtype='step',lw=3)
-        # plt.hist(p[k_idx],bins=bins,density=normalized,color='blue',histtype='step',lw=3)
-        # plt.legend(fontsize=18) 
-        # plt.title(r"$|\vec{p}| \in $ " + f"({mom_low:.2f},{mom_high:.2f})" + r", $\sigma = $ {0:.2f}".format(sep_NF),fontsize=18)
-        # plt.xlabel(r"$Ln \, L(K) - Ln \, L(\pi)$",fontsize=18)
-        # plt.ylabel("entries [#]",fontsize=18)
-        # plt.savefig(os.path.join(out_folder,f"Gauss_fit_momentum_({mom_low:.2f},{mom_high:.2f}).pdf"),bbox_inches="tight")
-        # plt.close()
 
     fig = plt.figure(figsize=(10,10))
-    #plt.errorbar(centers,aucs_geom,yerr=[np.array(aucs_geom) - np.array(aucs_geom_lower),np.array(aucs_geom_upper) - np.array(aucs_geom)],label=r"$AUC_{Geometric.}$",color='blue',marker='o',capsize=5)
-    plt.errorbar(centers,aucs,yerr=[np.array(aucs) - np.array(aucs_lower),np.array(aucs_upper) - np.array(aucs)],label=r"$AUC_{FM.}$",color='red',marker='o',capsize=5)
-    plt.errorbar(centers,swin_aucs,yerr=[np.array(swin_aucs) - np.array(swin_lowers),np.array(swin_uppers) - np.array(swin_aucs)],label=r"$AUC_{Swin.}$",color='magenta',marker='o',capsize=5)
-    plt.errorbar(centers,NF_aucs,yerr=[np.array(NF_aucs) - np.array(NF_lowers),np.array(NF_uppers) - np.array(NF_aucs)],label=r"$AUC_{NF-DLL.}$",color='blue',marker='o',capsize=5)
-    plt.errorbar(centers,geom_aucs,yerr=[np.array(geom_aucs) - np.array(geom_lowers),np.array(geom_uppers) - np.array(geom_aucs)],label=r"$AUC_{Geom.}$",color='k',marker='o',capsize=5)
+    #plt.errorbar(centers,fm_scratch_aucs,yerr=[np.array(fm_scratch_aucs) - np.array(fm_scratch_lowers),np.array(fm_scratch_uppers) - np.array(fm_scratch_aucs)],label=r"$FM_{Scratch}$",color='blue',marker='o',capsize=5)
+    plt.errorbar(centers,aucs,yerr=[np.array(aucs) - np.array(aucs_lower),np.array(aucs_upper) - np.array(aucs)],label=r"$FM_{Fine \, tune}$",color='red',marker='o',capsize=5)
+    plt.errorbar(centers,swin_aucs,yerr=[np.array(swin_aucs) - np.array(swin_lowers),np.array(swin_uppers) - np.array(swin_aucs)],label=r"$Swin$",color='magenta',marker='o',capsize=5)
+    plt.errorbar(centers,NF_aucs,yerr=[np.array(NF_aucs) - np.array(NF_lowers),np.array(NF_uppers) - np.array(NF_aucs)],label=r"$NF-DLL$",color='blue',marker='o',capsize=5)
+    plt.errorbar(centers,geom_aucs,yerr=[np.array(geom_aucs) - np.array(geom_lowers),np.array(geom_uppers) - np.array(geom_aucs)],label=r"$Geometric$",color='k',marker='o',capsize=5)
 
-
-    # plt.axhline(0.98, color='k', lw=2, linestyle='--',label=r"3\sigma \, separation")
-    legend1 = plt.legend(loc='lower left', fontsize=24)
-    legend1.get_frame().set_facecolor('white')  # Set legend facecolor
-    legend1.get_frame().set_edgecolor('grey')  # Set legend edgecolor
-    legend1.get_frame().set_alpha(1.0)  # Set legend alpha
-    plt.xlabel("momentum [GeV/c]",fontsize=30,labelpad=10)
-    plt.ylabel("AUC",fontsize=30,labelpad=10)
-    plt.xticks(fontsize=20)  # adjust fontsize as needed
-    plt.yticks(fontsize=20)  # adjust fontsize as needed
-    # if np.min(aucs) < np.min(aucs_geom):
-    #     min_aucs = np.min(aucs)
-    # else:
-    #     min_aucs = np.min(aucs_geom)
-    # if np.max(aucs) > np.max(aucs_geom):
-    #     max_aucs = np.max(aucs)
-    # else:
-    #     max_aucs = np.max(aucs_geom)
+    ax1 = plt.gca()
+    
+    plt.xlabel("momentum [GeV/c]", fontsize=45, labelpad=10)
+    plt.ylabel("AUC", fontsize=45, labelpad=10)
+    plt.xticks(fontsize=30)
+    plt.yticks(fontsize=30)
 
     min_aucs = np.min(geom_aucs + aucs + swin_aucs + NF_aucs)
     max_aucs = np.max(geom_aucs + aucs + swin_aucs + NF_aucs)
-
-    plt.ylim(min_aucs - 0.05,max_aucs + 0.05)
+    plt.ylim(min_aucs - 0.05, max_aucs + 0.05)
 
     ax2 = plt.twinx()
 
     # Plot bars for pions and kaons
     ax2.bar(np.array(centers) - 0.1, n_pions, width=0.2, label='Pions', color='blue', alpha=0.15)
     ax2.bar(np.array(centers) + 0.1, n_kaons, width=0.2, label='Kaons', color='green', alpha=0.15)
-    ax2.set_ylabel('Counts', fontsize=30,labelpad=10)
-    ax2.tick_params(axis='y', labelsize=20)
-    legend2 = ax2.legend(loc='upper right', fontsize=24)
-    legend2.get_frame().set_facecolor('white')  # Set legend facecolor
-    legend2.get_frame().set_edgecolor('grey')  # Set legend edgecolor
-    legend2.get_frame().set_alpha(1.0)  # Set legend alpha
-    out_path = os.path.join(out_folder,"AUC_func_P.pdf")
-    plt.savefig(out_path,bbox_inches='tight')
+    ax2.set_ylabel('Counts', fontsize=45, labelpad=10)
+    ax2.tick_params(axis='y', labelsize=30)
+
+    # Both legends on ax2 so they render on the top layer
+    handles1, labels1 = ax1.get_legend_handles_labels()
+    legend1 = ax2.legend(handles1, labels1, loc='lower left', fontsize=30)
+    legend1.get_frame().set_facecolor('white')
+    legend1.get_frame().set_edgecolor('grey')
+    legend1.get_frame().set_alpha(1.0)
+    ax2.add_artist(legend1)
+
+    legend2 = ax2.legend(loc='upper right', fontsize=30)
+    legend2.get_frame().set_facecolor('white')
+    legend2.get_frame().set_edgecolor('grey')
+    legend2.get_frame().set_alpha(1.0)
+
+    out_path = os.path.join(out_folder, "AUC_func_P.pdf")
+    plt.savefig(out_path, bbox_inches='tight')
     plt.close()
+ 
 
 
 

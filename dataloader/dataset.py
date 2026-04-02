@@ -169,8 +169,6 @@ class DIRC_Dataset_Classification(Dataset):
             p__ = data[i]['P']
             phi__ = data[i]['Phi']
             nh = data[i]['NHits']
-            x__ = data[i]['X']
-            y__ = data[i]['Y']
             if ((theta__ > self.stats['theta_min']) and (theta__ < self.stats['theta_max']) 
                  and (p__ > self.stats['P_min']) and (p__ < self.stats['P_max']) 
                  and (phi__ > self.stats['phi_min']) and (phi__ < self.stats['phi_max'])
@@ -385,7 +383,7 @@ class DIRC_Dataset_SequenceLevel(Dataset):
         # Sanity checks
         assert positional_token.min() >= 1, f"Token underflow: min token = {positional_token.min()}"
         assert positional_token.max() <= 90 * self.num_pixels, f"Token overflow: max token = {positional_token.max()}"
-        
+
         pos_time = np.where((time > self.stats['time_min']) & (time < self.stats['time_max']))[0]
         time = time[pos_time]
         positional_token = positional_token[pos_time]
