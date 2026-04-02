@@ -54,7 +54,8 @@ All training is configuration-driven via JSON config files. We provide three mai
 ### Generative Model Training
 
 ```bash
-torchrun --nproc-per-node=NUM_GPUS train_dist.py --config config/GlueX_config.json
+torchrun --nproc-per-node=NUM_GPUS train_dist.py \
+  --config config/GlueX_config.json
 ```
 
 Default configuration uses 4 experts in the Mixture-of-Experts layer. Customize experts and other hyperparameters in the config file.
@@ -72,7 +73,8 @@ Optional fine-tuning from pre-trained generative models. If the generative model
 ### Filtering Model Training
 
 ```bash
-torchrun --nproc-per-node=4 train_dist_filtering.py --config config/GlueX_config.json
+torchrun --nproc-per-node=NUM_GPUS train_dist_filtering.py \
+  --config config/GlueX_config.json
 ```
 
 Optional fine-tuning from pre-trained generative models is also supported.
